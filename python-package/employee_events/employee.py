@@ -1,65 +1,50 @@
 # Import the QueryBase class
-#### YOUR CODE HERE
+from query_base import QueryBase
 
-# Import dependencies needed for sql execution
-# from the `sql_execution` module
-#### YOUR CODE HERE
+# Import dependencies needed for SQL execution
+from sql_execution import QueryMixin  
 
-# Define a subclass of QueryBase
-# called Employee
-#### YOUR CODE HERE
-
-    # Set the class attribute `name`
-    # to the string "employee"
-    #### YOUR CODE HERE
-
+# Define a subclass of QueryBase called Employee
+class Employee(QueryBase):
+    # Set the class attribute `name` to the string "employee"
+    name = "employee"
 
     # Define a method called `names`
-    # that receives no arguments
-    # This method should return a list of tuples
-    # from an sql execution
-    #### YOUR CODE HERE
-        
-        # Query 3
-        # Write an SQL query
-        # that selects two columns 
-        # 1. The employee's full name
-        # 2. The employee's id
-        # This query should return the data
-        # for all employees in the database
-        #### YOUR CODE HERE
-    
+    # that returns a list of tuples from SQL execution
+    def names(self):
+        # Query 3: select employee full name and id for all employees
+        query = f"""
+            SELECT full_name, employee_id
+            FROM {self.name}
+        """
+        # Execute the query and return results
+        return execute(query)
 
-    # Define a method called `username`
-    # that receives an `id` argument
-    # This method should return a list of tuples
-    # from an sql execution
-    #### YOUR CODE HERE
-        
-        # Query 4
-        # Write an SQL query
-        # that selects an employees full name
-        # Use f-string formatting and a WHERE filter
-        # to only return the full name of the employee
-        # with an id equal to the id argument
-        #### YOUR CODE HERE
+    # Define a method called `username` that receives an `id` argument
+    # Returns the full name of the employee with that id
+    def username(self, id):
+        # Query 4: select employee full name for a specific id
+        query = f"""
+            SELECT full_name
+            FROM {self.name}
+            WHERE employee_id = {id}
+        """
+        return execute(query)
 
-
-    # Below is method with an SQL query
-    # This SQL query generates the data needed for
-    # the machine learning model.
-    # Without editing the query, alter this method
-    # so when it is called, a pandas dataframe
-    # is returns containing the execution of
-    # the sql query
-    #### YOUR CODE HERE
+    # Method to return model data as a pandas DataFrame
     def model_data(self, id):
+        import pandas as pd
 
-        return f"""
-                    SELECT SUM(positive_events) positive_events
-                         , SUM(negative_events) negative_events
-                    FROM {self.name}
-                    JOIN employee_events
-                        USING({self.name}_id)
-                    WHERE {self.name}.{self.name}_id = {id}
-                """
+        query = f"""
+            SELECT SUM(positive_events) positive_events
+                 , SUM(negative_events) negative_events
+            FROM {self.name}
+            JOIN employee_events
+                USING({self.name}_id)
+            WHERE {self.name}.{self.name}_id = {id}
+        """
+        # Execute the query
+        results = execute(query)
+        # Convert results to a pandas DataFrame and return
+        df = pd.DataFrame(results, columns=['positive_events', 'negative_events'])
+        return df

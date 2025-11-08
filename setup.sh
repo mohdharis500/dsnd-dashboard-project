@@ -1,3 +1,7 @@
 git add .
-git commit -m "Initial commit from Workspace"
-git push origin main
+
+# Commit your changes with a message
+git commit -m "Submit final project: Software Engineering for Data Scientists"
+
+# Push to GitHub
+git push
